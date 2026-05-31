@@ -33,17 +33,29 @@
 		69FD12722FCB051F00B32A7C /* Exceptions for "task1" folder in "task1" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				.gitignore,
 				Info.plist,
 			);
 			target = 69FD12492FCB051D00B32A7C /* task1 */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		69F896B02FCC024700241F63 /* Exceptions for "task1" folder in "Compile Sources" phase from "task1" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 69FD12462FCB051D00B32A7C /* Sources */;
+			membershipExceptions = (
+				.gitignore,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		69FD124C2FCB051D00B32A7C /* task1 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				69FD12722FCB051F00B32A7C /* Exceptions for "task1" folder in "task1" target */,
+				69F896B02FCC024700241F63 /* Exceptions for "task1" folder in "Compile Sources" phase from "task1" target */,
 			);
 			path = task1;
 			sourceTree = "<group>";
