@@ -5,6 +5,7 @@
 //  Created by Rotem Gilboa on 30/05/2026.
 //
 
+
 import UIKit
 
 class GameViewController: UIViewController {
@@ -19,19 +20,16 @@ class GameViewController: UIViewController {
     @IBOutlet weak var rightScoreLabel: UILabel!
     @IBOutlet weak var rightCardImageView: UIImageView!
     
-    
     @IBOutlet weak var timerLabel: UILabel!
-    
     
     var playerSide: String?
     var playerName: String?
     
     var playerScore = 0
     var pcScore = 0
-    var roundsPlayed = 0
-    var countdown = 5
-    var gameTimer: Timer?
     var isPlayerOnLeft = true
+    
+    let gameClock = GameClock()
     
     let cardNames = [
         "001-ace of spades", "002-ace of clubs", "003-ace of diamonds", "004-ace of hearts",
@@ -57,7 +55,17 @@ class GameViewController: UIViewController {
         
         setupGame()
         startGameLoop()
+        
+        SoundManager.shared.playBackgroundMusic(filename: "musicbackground", fileExtension: "mp3")
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
+    
+    deinit {
+            NotificationCenter.default.removeObserver(self)
+        }
+    
     
     // MARK: - Setup
     private func setupGame() {
@@ -79,30 +87,10 @@ class GameViewController: UIViewController {
     }
     
     // MARK: - Timer & Game Logic
-    private func startGameLoop() {
-        gameTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerTick), userInfo: nil, repeats: true)
-    }
-    
-    @objc private func timerTick() {
-        if roundsPlayed == 10 && countdown == 1 {
-            endGame()
-            return
+        private func startGameLoop() {
+            gameClock.delegate = self
+            gameClock.start()
         }
-        
-        timerLabel.text = "\(countdown)"
-        
-        if countdown == 5 {
-            roundsPlayed += 1
-            playRound()
-        } else if countdown == 2 {
-            flipCardsFaceDown()
-        }
-        
-        countdown -= 1
-        if countdown == 0 {
-            countdown = 5
-        }
-    }
     
     private func getCardPower(fromIndex index: Int) -> Int {
         if index == 52 { return 15 }
@@ -116,28 +104,36 @@ class GameViewController: UIViewController {
     }
     
     private func playRound() {
-        let leftIndex = Int.random(in: 0...52)
-        let rightIndex = Int.random(in: 0...52)
-        
-        leftCardImageView.image = UIImage(named: cardNames[leftIndex])
-        rightCardImageView.image = UIImage(named: cardNames[rightIndex])
-        
-        let leftCardPower = getCardPower(fromIndex: leftIndex)
-        let rightCardPower = getCardPower(fromIndex: rightIndex)
-        
-        if leftCardPower > rightCardPower {
-            if isPlayerOnLeft { playerScore += 1 } else { pcScore += 1 }
-        } else if rightCardPower > leftCardPower {
-            if !isPlayerOnLeft { playerScore += 1 } else { pcScore += 1 }
+            SoundManager.shared.playSoundEffect(filename: "flipcard", fileExtension: "mp3")
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                let leftIndex = Int.random(in: 0...52)
+                let rightIndex = Int.random(in: 0...52)
+                
+                self.leftCardImageView.image = UIImage(named: self.cardNames[leftIndex])
+                self.rightCardImageView.image = UIImage(named: self.cardNames[rightIndex])
+                
+                let leftCardPower = self.getCardPower(fromIndex: leftIndex)
+                let rightCardPower = self.getCardPower(fromIndex: rightIndex)
+                
+                if leftCardPower > rightCardPower {
+                    if self.isPlayerOnLeft { self.playerScore += 1 } else { self.pcScore += 1 }
+                } else if rightCardPower > leftCardPower {
+                    if !self.isPlayerOnLeft { self.playerScore += 1 } else { self.pcScore += 1 }
+                }
+                
+                self.updateScoreLabels()
+            }
         }
         
-        updateScoreLabels()
-    }
-    
     private func flipCardsFaceDown() {
-        leftCardImageView.image = UIImage(named: "card_back")
-        rightCardImageView.image = UIImage(named: "card_back")
-    }
+            SoundManager.shared.playSoundEffect(filename: "flipcard", fileExtension: "mp3")
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                self.leftCardImageView.image = UIImage(named: "card_back")
+                self.rightCardImageView.image = UIImage(named: "card_back")
+            }
+        }
     
     private func updateScoreLabels() {
         if isPlayerOnLeft {
@@ -149,12 +145,27 @@ class GameViewController: UIViewController {
         }
     }
     
+    // MARK: - App LifeCycle Handling
+        
+        @objc func appMovedToBackground() {
+            print("App moved to background - pausing game")
+            gameClock.stop()
+            SoundManager.shared.pauseBackgroundMusic()
+        }
+        
+        @objc func appMovedToForeground() {
+            print("App moved to foreground - resuming game")
+            gameClock.start()
+            SoundManager.shared.resumeBackgroundMusic()
+        }
+    
     private func endGame() {
-        gameTimer?.invalidate()
         timerLabel.text = "0"
         
-        print("Game Over! Player: \(playerScore), PC: \(pcScore)")
+        SoundManager.shared.stopBackgroundMusic()
+        SoundManager.shared.playSoundEffect(filename: "winnersound", fileExtension: "mp3")
         
+        print("Game Over! Player: \(playerScore), PC: \(pcScore)")
         performSegue(withIdentifier: "showSummarySegue", sender: self)
     }
     
@@ -167,5 +178,25 @@ class GameViewController: UIViewController {
                 summaryVC.playerName = self.playerName
             }
         }
+    }
+}
+
+// MARK: - GameClockDelegate
+extension GameViewController: GameClockDelegate {
+    
+    func gameClockDidUpdateTimer(currentTime: Int) {
+        timerLabel.text = "\(currentTime)"
+    }
+    
+    func gameClockDidTriggerRound() {
+        playRound()
+    }
+    
+    func gameClockDidTriggerFlip() {
+        flipCardsFaceDown()
+    }
+    
+    func gameClockDidFinish() {
+        endGame()
     }
 }

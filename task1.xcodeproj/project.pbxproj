@@ -100,10 +100,10 @@
 		69FD12412FCB051D00B32A7C = {
 			isa = PBXGroup;
 			children = (
-				69FD124C2FCB051D00B32A7C /* task1 */,
 				69FD12632FCB051F00B32A7C /* task1Tests */,
 				69FD126D2FCB051F00B32A7C /* task1UITests */,
 				69FD124B2FCB051D00B32A7C /* Products */,
+				69FD124C2FCB051D00B32A7C /* task1 */,
 			);
 			sourceTree = "<group>";
 		};
