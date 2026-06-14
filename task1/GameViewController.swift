@@ -163,7 +163,11 @@ class GameViewController: UIViewController {
         timerLabel.text = "0"
         
         SoundManager.shared.stopBackgroundMusic()
-        SoundManager.shared.playSoundEffect(filename: "winnersound", fileExtension: "mp3")
+        if playerScore > pcScore {
+            SoundManager.shared.playSoundEffect(filename: "winnersound", fileExtension: "mp3")
+        } else {
+            SoundManager.shared.playSoundEffect(filename: "losegame", fileExtension: "mp3")
+        }
         
         print("Game Over! Player: \(playerScore), PC: \(pcScore)")
         performSegue(withIdentifier: "showSummarySegue", sender: self)
