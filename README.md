@@ -7,9 +7,9 @@ A dynamic, fully responsive iOS card game built natively in Swift using UIKit. T
 ## 📺 Video Demonstration
 Check out the fully working app gameplay on YouTube:
 
-[![Watch the Video](https://img.shields.io/badge/YouTube-Watch%20Demo-red?style=for-the-badge&logo=youtube)](https://youtu.be/85CZH2Irnps)
+[![Watch the Video](https://img.shields.io/badge/YouTube-Watch%20Demo-red?style=for-the-badge&logo=youtube)](https://youtu.be/NdKNHxihicc)
 
-[![Card Clash Gameplay Demo](https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80)](https://youtu.be/85CZH2Irnps)
+[![Card Clash Gameplay Demo](https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80)](https://youtu.be/NdKNHxihicc)
 
 ---
 
