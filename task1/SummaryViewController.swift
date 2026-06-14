@@ -34,8 +34,8 @@ class SummaryViewController: UIViewController {
             statusLabel.text = "Winner: PC"
             scoreLabel.text = "score: \(finalPcScore)"
         } else {
-            statusLabel.text = "Winner: Tie"
-            scoreLabel.text = "score: \(finalPlayerScore)"
+            statusLabel.text = "Winner: PC"
+            scoreLabel.text = "score: \(finalPcScore)"
         }
     }
     
